@@ -47,21 +47,15 @@ class CryptoBot(CryptoBotApi):
             if tapped_count > tap_count:
                 break
 
-    async def perform_tasks(self) -> None:
-        for i in self.tasks:
-            name = i["name_en"]
-            if i["id"] in self.synced_data.missions:
-                continue
-            # if not i["is_active"]:
-            if "Friend" in name or i["visibility"] != "PUBLIC":
-                continue
-            if channel_id := i["channel_id"]:
-                await self.join_and_archive_channel(channel_id)
-            else:
-                await self.complete_mission(i["id"])
-                await self.sleeper(additional_delay=5)
-                await self.complete_mission(i["id"])
-                self.logger.info(f"Task <g>{name}</g> completed")
+    async def check_and_complete_tasks(self) -> None:
+        tasks = await self.get_tasks()
+        for task in tasks:
+            if (task_id := task["id"]) in [1, 2, 3, 4, 7] and not task["completed"]:
+                await self.put_task(json_body={"task": task_id})
+                self.logger.info(
+                    f"Task <g>{task['type']}</g> completed Reward coins: <y>{task['reward_coins']}</y> Energy: <blue>{task['reward_energy']}</blue>"
+                )
+                await self.sleeper()
 
     async def run(self, proxy: str | None) -> None:
         proxy = proxy or self.additional_data.proxy
@@ -81,26 +75,27 @@ class CryptoBot(CryptoBotApi):
                     break
                 try:
                     await self.login_to_app(proxy)
-                    http_client.headers["init-data"] = self.init_data_base64
-                    # self.tasks = await self.get_tasks()
+
+                    http_client.headers["Init-Data"] = self.init_data_base64
+                    self.logger.info("Bot started")
+                    await self.check_and_complete_tasks()
                     ws_url = (
                         f"wss://{config.api_domain}/api/users/{self.user_id}/actions?init-data={self.init_data_base64}"
                     )
                     async with websockets.connect(ws_url) as ws:
                         self.ws = ws
-                        self.synced_data = await self.send_taps(taps_count=[1, 1])
+                        self.synced_data = await self.send_taps()
                         if config.TAPS_ENABLED:
                             await self.perform_taps()
                         if self.synced_data.minigame:
                             await self.send_minigame()
-                        await self.perform_tasks()
                         sleep_time = random.randint(*config.BOT_SLEEP_TIME)
                         self.logger.info(f"Sleeping <c>{sleep_time}</c>")
                         await asyncio.sleep(sleep_time)
 
                 except RuntimeError as error:
                     raise error from error
-                except Exception:
+                except Exception as e:
                     self.errors += 1
                     self.authorized = False
                     self.logger.exception("Unknown error")

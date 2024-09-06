@@ -45,7 +45,7 @@ class Settings(BaseSettings):
 
     # taps
     TAPS_ENABLED: bool = True
-    TAPS_COUNT: list[int] = [500, 600]
+    TAPS_COUNT: list[int] = [300, 400]
     TAP_ENERGY_THRESHOLD: int = 50
     TAPS_DELAY: list[float] = [0.01, 0.08]
     # bot

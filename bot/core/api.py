@@ -7,6 +7,7 @@ import aiohttp
 from aiohttp_proxy import ProxyConnector
 from aiohttp_socks import ProxyConnector as SocksProxyConnector
 from better_proxy import Proxy
+from pydantic import BaseModel
 from pyrogram import Client, errors
 from pyrogram.errors import RPCError
 from pyrogram.raw.functions import account
@@ -116,7 +117,7 @@ class CryptoBotApi:
                     chat = await self.tg_client.join_chat(channel_name)
                     self.logger.info(f"Successfully joined to <g>{chat.title}</g>")
                 except RPCError:
-                    self.logger.error(f"Channel <y>{channel_name}</y> not found")
+                    self.logger.exception(f"Channel <y>{channel_name}</y> not found")
                     raise
                 else:
                     await self.sleeper()
@@ -142,7 +143,7 @@ class CryptoBotApi:
     async def send_json_data_via_websocket(
         self,
         content: dict,
-        content_class=UserStats,
+        content_class: BaseModel = UserStats,
     ):
         try:
             await self.ws.send(json.dumps(content))
@@ -158,11 +159,11 @@ class CryptoBotApi:
     @error_handler()
     @handle_request("/api/users/tasks", method="GET")
     async def get_tasks(self, *, response_json: dict) -> dict:
-        return response_json
+        return response_json["tasks"]
 
     @error_handler()
     @handle_request("/api/users/tasks", method="PUT")
-    async def put_task(self, *, response_json: dict, request_json: dict) -> dict:
+    async def put_task(self, *, response_json: dict, json_body: dict) -> dict:
         return response_json
 
     async def check_proxy(self, proxy: Proxy) -> None:
@@ -174,9 +175,7 @@ class CryptoBotApi:
             self.logger.exception(f"Proxy: {proxy}")
 
     @error_handler()
-    async def send_taps(
-        self, sleep_time: list[int] = config.TAPS_DELAY, taps_count: list[int] = config.TAPS_COUNT
-    ) -> UserStats:
+    async def send_taps(self, sleep_time: list[int] = config.TAPS_DELAY) -> UserStats:
         sleep_time = random.uniform(*sleep_time)
         res = await self.send_json_data_via_websocket(
             content={"type": "game", "click": 0},
@@ -186,7 +185,7 @@ class CryptoBotApi:
         return res
 
     @error_handler()
-    async def send_minigame(self) -> dict:
+    async def send_minigame(self) -> UserStats:
         res = await self.send_json_data_via_websocket(
             content={"type": "minigame", "success": True, "result": 3500},
         )
