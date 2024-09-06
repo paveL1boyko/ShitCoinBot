@@ -172,7 +172,7 @@ class CryptoBotApi:
         return response_json
 
     @error_handler()
-    @handle_request("/api/users/stats", method="GET")
+    @handle_request("/api/users/status/", method="GET")
     async def get_user_status(self, *, response_json: dict) -> UserData:
         return UserData.model_validate_json(json.dumps(response_json))
 

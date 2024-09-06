@@ -82,14 +82,14 @@ class CryptoBot(CryptoBotApi):
                     # await self.login(
                     #     url=f"{config.api_path}/api/users/{self.user_id}/actions?init-data={self.init_data_base64}"
                     # )
-                    await self.check_and_complete_tasks()
                     self.logger.info("Bot started")
+                    self.user_data: UserData = await self.get_user_status()
+                    await self.check_and_complete_tasks()
                     ws_url = (
                         f"wss://{config.api_domain}/api/users/{self.user_id}/actions?init-data={self.init_data_base64}"
                     )
                     async with websockets.connect(ws_url) as ws:
                         self.ws = ws
-                        self.user_data: UserData = await self.get_user_status()
                         self.logger.info(
                             f"Synced data: <y>{self.user_data.coins}</y> | Energy <blue>{self.user_data.energy}</blue>"
                         )
