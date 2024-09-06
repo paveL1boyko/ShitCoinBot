@@ -78,13 +78,13 @@ class CryptoBot(CryptoBotApi):
 
                     http_client.headers["Init-Data"] = self.init_data_base64
                     self.logger.info("Bot started")
-                    await self.check_and_complete_tasks()
                     ws_url = (
                         f"wss://{config.api_domain}/api/users/{self.user_id}/actions?init-data={self.init_data_base64}"
                     )
                     async with websockets.connect(ws_url) as ws:
                         self.ws = ws
                         self.synced_data = await self.send_taps()
+                        await self.check_and_complete_tasks()
                         if config.TAPS_ENABLED:
                             await self.perform_taps()
                         if self.synced_data.minigame:
@@ -95,7 +95,7 @@ class CryptoBot(CryptoBotApi):
 
                 except RuntimeError as error:
                     raise error from error
-                except Exception as e:
+                except Exception:
                     self.errors += 1
                     self.authorized = False
                     self.logger.exception("Unknown error")
