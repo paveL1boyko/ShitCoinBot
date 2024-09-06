@@ -91,10 +91,11 @@ class CryptoBot(CryptoBotApi):
                         self.logger.info(
                             f"Synced data: <y>{self.synced_data.coins}</y> | Energy <blue>{self.synced_data.energy}</blue>"
                         )
-                        if config.TAPS_ENABLED:
-                            await self.perform_taps()
                         if self.synced_data.minigame:
                             await self.send_minigame()
+                        if config.TAPS_ENABLED:
+                            await self.perform_taps()
+
                         sleep_time = random.randint(*config.BOT_SLEEP_TIME)
                         self.logger.info(f"Sleeping <c>{sleep_time}</c>")
                     await asyncio.sleep(sleep_time)
