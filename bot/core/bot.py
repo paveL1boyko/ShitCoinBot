@@ -88,7 +88,9 @@ class CryptoBot(CryptoBotApi):
                     async with websockets.connect(ws_url) as ws:
                         self.ws = ws
                         self.synced_data = await self.send_taps()
-
+                        self.logger.info(
+                            f"Synced data: <y>{self.synced_data.coins}</y> | Energy <b>{self.synced_data.energy}</b>"
+                        )
                         if config.TAPS_ENABLED:
                             await self.perform_taps()
                         if self.synced_data.minigame:
