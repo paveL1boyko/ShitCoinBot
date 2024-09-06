@@ -1,31 +1,13 @@
-from enum import Enum
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 logo = """
-
-███    ███ ██    ██ ███████ ██   ██     ███████ ███    ███ ██████  ██ ██████  ███████
-████  ████ ██    ██ ██      ██  ██      ██      ████  ████ ██   ██ ██ ██   ██ ██
-██ ████ ██ ██    ██ ███████ █████       █████   ██ ████ ██ ██████  ██ ██████  █████
-██  ██  ██ ██    ██      ██ ██  ██      ██      ██  ██  ██ ██      ██ ██   ██ ██
-██      ██  ██████  ███████ ██   ██     ███████ ██      ██ ██      ██ ██   ██ ███████
-
+   _____ _     _ _        _____      _
+  / ____| |   (_) |      / ____|    (_)
+ | (___ | |__  _| |_ ___| |     _ __ _ _ __
+  \\___ \\| '_ \\| | __/ _ \\ |    | '__| | '_ \
+  ____) | | | | | ||  __/ |____| |  | | | | |
+ |_____/|_| |_|_|\\__\\___|\\_____|_|  |_|_| |_|
 """
-
-
-class Strategy(str, Enum):
-    flexible = "flexible"
-    protective = "protective"
-    aggressive = "aggressive"
-    random = "random"
-
-
-class League(str, Enum):
-    bronze = "bronze"
-    silver = "silver"
-    gold = "gold"
-    platina = "platina"
-    diamond = "diamond"
 
 
 class Settings(BaseSettings):
