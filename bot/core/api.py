@@ -201,7 +201,7 @@ class CryptoBotApi:
         res = await self.send_json_data_via_websocket(
             content={"type": "minigame", "success": True, "result": 3500},
         )
-        self.logger.info(f"Minigame result: <g>{res}</g>")
+        self.logger.info(f"Minigame result: <y>+{3500}</y>")
         return res
 
     def _update_synced_data(self, res: UserStats) -> None:
