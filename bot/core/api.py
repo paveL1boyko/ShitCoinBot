@@ -23,7 +23,7 @@ from .models import UserData, UserStats
 
 class CryptoBotApi:
     def __init__(self, tg_client: Client):
-        self.user_data: UserStats = None
+        self.user_data: UserData = None
         self.session_name = tg_client.name
         self.tg_client = tg_client
         self.user_id = None
@@ -205,6 +205,5 @@ class CryptoBotApi:
         return res
 
     def _update_synced_data(self, res: UserStats) -> None:
-        self.user_data.energy = res.energy
-        self.user_data.coins = res.coins
-        self.user_data.coins = res.coins
+        self.user_data.energy_remain = res.energy
+        self.user_data.coin_count = res.coins
