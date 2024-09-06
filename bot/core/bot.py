@@ -42,6 +42,7 @@ class CryptoBot(CryptoBotApi):
         while self.user_data.energy_remain:
             res = await self.send_taps()
             if res.minigame:
+                self.logger.info("Performing minigame...")
                 await self.send_minigame()
             if self.user_data.energy_remain % config.TAP_ENERGY_THRESHOLD == 0:
                 self.logger.info(f"Tapped balance total: <y>+{res.coins}</y>. Energy: <blue>{res.energy}</blue>")
@@ -91,6 +92,7 @@ class CryptoBot(CryptoBotApi):
                     async with websockets.connect(ws_url) as ws:
                         self.ws = ws
                         if self.user_data.minigame:
+                            self.logger.info("Performing minigame...")
                             await self.send_minigame()
                         if config.TAPS_ENABLED:
                             await self.perform_taps()
