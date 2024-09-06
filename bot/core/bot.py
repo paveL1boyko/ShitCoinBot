@@ -89,7 +89,7 @@ class CryptoBot(CryptoBotApi):
                         self.ws = ws
                         self.synced_data = await self.send_taps()
                         self.logger.info(
-                            f"Synced data: <y>{self.synced_data.coins}</y> | Energy <b>{self.synced_data.energy}</b>"
+                            f"Synced data: <y>{self.synced_data.coins}</y> | Energy <blue>{self.synced_data.energy}</blue>"
                         )
                         if config.TAPS_ENABLED:
                             await self.perform_taps()
