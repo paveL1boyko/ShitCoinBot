@@ -77,9 +77,9 @@ class CryptoBot(CryptoBotApi):
                     await self.login_to_app(proxy)
 
                     http_client.headers["Init-Data"] = self.init_data_base64
-                    await self.login(
-                        url=f"{config.api_path}/api/users/{self.user_id}/actions?init-data={self.init_data_base64}"
-                    )
+                    # await self.login(
+                    #     url=f"{config.api_path}/api/users/{self.user_id}/actions?init-data={self.init_data_base64}"
+                    # )
                     await self.check_and_complete_tasks()
                     self.logger.info("Bot started")
                     ws_url = (
