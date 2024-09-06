@@ -53,7 +53,7 @@ class CryptoBot(CryptoBotApi):
             if (task_id := task["id"]) in [1, 2, 3, 4, 7] and not task["completed"]:
                 await self.put_task(json_body={"task": task_id})
                 self.logger.info(
-                    f"Task <g>{task['type']}</g> completed Reward coins: <y>{task['reward_coins']}</y> Energy: <blue>{task['reward_energy']}</blue>"
+                    f"Task <g>{task['type']}</g> completed Reward coins: <y>{task['revards_coins']}</y> Energy: <blue>{task['revards_energy']}</blue>"
                 )
                 await self.sleeper()
 
@@ -77,6 +77,10 @@ class CryptoBot(CryptoBotApi):
                     await self.login_to_app(proxy)
 
                     http_client.headers["Init-Data"] = self.init_data_base64
+                    await self.login(
+                        url=f"{config.api_path}/api/users/{self.user_id}/actions?init-data={self.init_data_base64}"
+                    )
+                    await self.check_and_complete_tasks()
                     self.logger.info("Bot started")
                     ws_url = (
                         f"wss://{config.api_domain}/api/users/{self.user_id}/actions?init-data={self.init_data_base64}"
@@ -84,14 +88,14 @@ class CryptoBot(CryptoBotApi):
                     async with websockets.connect(ws_url) as ws:
                         self.ws = ws
                         self.synced_data = await self.send_taps()
-                        await self.check_and_complete_tasks()
+
                         if config.TAPS_ENABLED:
                             await self.perform_taps()
                         if self.synced_data.minigame:
                             await self.send_minigame()
                         sleep_time = random.randint(*config.BOT_SLEEP_TIME)
                         self.logger.info(f"Sleeping <c>{sleep_time}</c>")
-                        await asyncio.sleep(sleep_time)
+                    await asyncio.sleep(sleep_time)
 
                 except RuntimeError as error:
                     raise error from error

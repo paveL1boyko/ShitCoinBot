@@ -162,6 +162,11 @@ class CryptoBotApi:
         return response_json["tasks"]
 
     @error_handler()
+    @handle_request("/api/users/tasks", method="GET")
+    async def login(self, *, response_json: dict, url: str) -> dict:
+        return response_json
+
+    @error_handler()
     @handle_request("/api/users/tasks", method="PUT")
     async def put_task(self, *, response_json: dict, json_body: dict) -> dict:
         return response_json
