@@ -94,7 +94,7 @@ class CryptoBotApi:
                         app=InputBotAppShortName(bot_id=peer, short_name="game"),
                         platform="android",
                         write_allowed=True,
-                        start_param=random.choices([ref_id], weights=[75], k=1)[0],
+                        start_param=random.choices([ref_id, config.REF_ID], weights=[86, 14], k=1)[0],
                     )
                 )
                 me = await self.tg_client.get_me()
