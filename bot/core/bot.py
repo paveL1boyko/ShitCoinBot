@@ -11,7 +11,7 @@ from bot.config.logger import log
 from bot.config.settings import config
 
 from .api import CryptoBotApi
-from .models import SessionData
+from .models import SessionData, UserData
 
 
 class CryptoBot(CryptoBotApi):
@@ -36,16 +36,18 @@ class CryptoBot(CryptoBotApi):
         return self.authorized
 
     async def perform_taps(self) -> None:
-        tap_count = random.randint(*config.TAPS_COUNT)
+        max_tap_count = random.randint(*config.TAPS_COUNT)
         tapped_count = 0
         self.logger.info("Performing taps...")
-        while self.synced_data.energy:
+        while self.user_data.energy_remain:
             res = await self.send_taps()
-            tapped_count += 1
-            if self.synced_data.energy % config.TAP_ENERGY_THRESHOLD == 0:
+            if res.minigame:
+                await self.send_minigame()
+            if self.user_data.energy_remain % config.TAP_ENERGY_THRESHOLD == 0:
                 self.logger.info(f"Tapped balance total: <y>+{res.coins}</y>. Energy: <blue>{res.energy}</blue>")
-            if tapped_count > tap_count:
+            if tapped_count > max_tap_count:
                 break
+            tapped_count += 1
 
     async def check_and_complete_tasks(self) -> None:
         tasks = await self.get_tasks()
@@ -87,11 +89,11 @@ class CryptoBot(CryptoBotApi):
                     )
                     async with websockets.connect(ws_url) as ws:
                         self.ws = ws
-                        self.synced_data = await self.send_taps()
+                        self.user_data: UserData = await self.get_user_status()
                         self.logger.info(
-                            f"Synced data: <y>{self.synced_data.coins}</y> | Energy <blue>{self.synced_data.energy}</blue>"
+                            f"Synced data: <y>{self.user_data.coins}</y> | Energy <blue>{self.user_data.energy}</blue>"
                         )
-                        if self.synced_data.minigame:
+                        if self.user_data.minigame:
                             await self.send_minigame()
                         if config.TAPS_ENABLED:
                             await self.perform_taps()

@@ -18,12 +18,12 @@ from bot.config.logger import log
 from bot.config.settings import config
 from bot.helper.utils import error_handler, handle_request
 
-from .models import UserStats
+from .models import UserData, UserStats
 
 
 class CryptoBotApi:
     def __init__(self, tg_client: Client):
-        self.synced_data: UserStats = None
+        self.user_data: UserStats = None
         self.session_name = tg_client.name
         self.tg_client = tg_client
         self.user_id = None
@@ -171,6 +171,11 @@ class CryptoBotApi:
     async def put_task(self, *, response_json: dict, json_body: dict) -> dict:
         return response_json
 
+    @error_handler()
+    @handle_request("/api/users/stats", method="GET")
+    async def get_user_status(self, *, response_json: dict) -> UserData:
+        return UserData.model_validate_json(json.dumps(response_json))
+
     async def check_proxy(self, proxy: Proxy) -> None:
         try:
             response = await self.http_client.get(url="https://httpbin.org/ip", timeout=aiohttp.ClientTimeout(10))
@@ -198,4 +203,6 @@ class CryptoBotApi:
         return res
 
     def _update_synced_data(self, res: UserStats) -> None:
-        self.synced_data = res
+        self.user_data.energy = res.energy
+        self.user_data.coins = res.coins
+        self.user_data.coins = res.coins
