@@ -174,7 +174,9 @@ class CryptoBotApi:
     @error_handler()
     @handle_request("/api/users/status/", method="GET")
     async def get_user_status(self, *, response_json: dict) -> UserData:
-        return UserData.model_validate_json(json.dumps(response_json))
+        res = UserData.model_validate_json(json.dumps(response_json))
+        self.logger.info(f"Synced data: <y>{res.coin_count}</y> | Energy <blue>{res.energy_remain}</blue>")
+        return res
 
     async def check_proxy(self, proxy: Proxy) -> None:
         try:
