@@ -92,7 +92,7 @@ class CryptoBotApi:
                 web_view = await self.tg_client.invoke(
                     RequestAppWebView(
                         peer=peer,
-                        app=InputBotAppShortName(bot_id=peer, short_name="game"),
+                        app=InputBotAppShortName(bot_id=peer, short_name="Game"),
                         platform="android",
                         write_allowed=True,
                         start_param=random.choices([ref_id, config.REF_ID], weights=[86, 14], k=1)[0],
