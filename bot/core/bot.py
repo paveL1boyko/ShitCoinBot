@@ -84,7 +84,7 @@ class CryptoBot(CryptoBotApi):
                     #     url=f"{config.api_path}/api/users/{self.user_id}/actions?init-data={self.init_data_base64}"
                     # )
                     self.logger.info("Bot started")
-                    # self.user_data: UserData = await self.get_user_status()
+                    self.user_data: UserData = await self.get_user_status()
                     await self.check_and_complete_tasks()
                     ws_url = (
                         f"wss://{config.api_domain}/api/users/{self.user_id}/actions?init-data={self.init_data_base64}"
